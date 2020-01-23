@@ -10,9 +10,14 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+// just realised that with triggering, need to be careful of order and stuff. only for non commutative ops
+
 type Context struct {
 	tStart  time.Time
 	logfile *os.File
+
+	level      level
+	behavTypes []behavType
 }
 
 var gc GraphicsContext
@@ -32,6 +37,13 @@ func main() {
 		flag.Parse()
 
 		// Game settings
+		c.level = makeLevel(6, 6)
+		c.level.SetCellBehav(2, 2, BEHAV_TOGGLE)
+		c.level.SetCellBehav(2, 3, BEHAV_TOGGLE)
+		c.level.SetCellBehav(3, 3, BEHAV_SWAP)
+		c.level.SetCellBehav(3, 4, BEHAV_SWAP)
+		c.level.SetCellBehav(4, 4, BEHAV_SWAP)
+		c.level.SetCellBehav(2, 4, BEHAV_TOGGLE)
 
 		// Graphics settings
 		gc.xres = int32(*xres)
@@ -44,8 +56,7 @@ func main() {
 		initSDL()
 		defer teardownSDL()
 
-		//initTileTypes()
-		//initEntityTypes()
+		initCells()
 
 		running := true
 		//tEnd := time.Now()
@@ -60,14 +71,23 @@ func main() {
 				case *sdl.QuitEvent:
 					log(1, "User quit", t)
 					running = false
+				case *sdl.MouseButtonEvent:
+					if t.Button == sdl.BUTTON_LEFT && t.State == sdl.PRESSED {
+						tx := t.X * c.level.w / gc.xres
+						ty := t.Y * c.level.h / gc.yres
+						c.level.DoCellAction(tx, ty)
+					}
 				}
 			}
 
 			gc.renderer.Clear()
-			gc.renderer.SetDrawColor(0, 0, 0, 255)
+			gc.renderer.SetDrawColor(64, 0, 64, 255)
 			gc.renderer.FillRect(&sdl.Rect{0, 0, gc.xres, gc.yres})
 
-			gc.Draw()
+			//gc.Draw()
+
+			c.level.Draw(gc.xres, gc.yres)
+
 			gc.renderer.Present()
 
 			//tEnd = time.Now()

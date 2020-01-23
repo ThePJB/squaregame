@@ -28,7 +28,7 @@ func initSDL() {
 	if err := mix.OpenAudio(22050, mix.DEFAULT_FORMAT, 2, 4096); err != nil {
 		panic(err)
 	}
-	window, err := sdl.CreateWindow("Flower Game", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
+	window, err := sdl.CreateWindow("Square Game", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		gc.xres, gc.yres, sdl.WINDOW_SHOWN)
 	if err != nil {
 		panic(err)
