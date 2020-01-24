@@ -11,6 +11,19 @@ import (
 )
 
 // just realised that with triggering, need to be careful of order and stuff. only for non commutative ops
+// Levels get cluttered very quickly. maybe you want some dead squares that dont contribute to clutter
+// Maybe cleaner graphics, circle tiles? or the colour of behav symbol/tile itself shows the state
+// start with swaps and 1 tile things
+
+// Puzzle elements:
+// re cleaning: and gate, with the 4 tile toggle thing
+
+// todos:
+// level editor
+// 	base config, reset
+// clean up appearance
+// 	always blank (doesnt matter) tiles
+// 	tile state shines through symbol
 
 type Context struct {
 	tStart  time.Time
@@ -38,11 +51,15 @@ func main() {
 
 		// Game settings
 		c.level = makeLevel(6, 6)
-		c.level.SetCellBehav(2, 2, BEHAV_TOGGLE)
-		c.level.SetCellBehav(2, 3, BEHAV_TOGGLE)
+		c.level.SetCellBehav(1, 1, BEHAV_SWAP)
+		c.level.SetCellBehav(2, 2, BEHAV_SWAP)
+		c.level.SetCellBehav(3, 3, BEHAV_SWAP)
+		c.level.SetCellBehav(0, 1, BEHAV_TOGGLE)
+		c.level.SetCellBehav(1, 0, BEHAV_TOGGLE)
 		c.level.SetCellBehav(3, 3, BEHAV_SWAP)
 		c.level.SetCellBehav(3, 4, BEHAV_SWAP)
 		c.level.SetCellBehav(4, 4, BEHAV_SWAP)
+		c.level.SetCellBehav(5, 5, BEHAV_SWAP)
 		c.level.SetCellBehav(2, 4, BEHAV_TOGGLE)
 
 		// Graphics settings

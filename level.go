@@ -39,6 +39,8 @@ func makeLevel(w, h int32) level {
 	return l
 }
 
+// actually make a level editor and just pickle the levels, let it reset etc
+
 func (l *level) SetCellBehav(x, y int32, b int) {
 	l.cells[y*l.w+x].behaviour = b
 }
