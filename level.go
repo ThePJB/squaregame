@@ -3,8 +3,9 @@ package main
 import "github.com/veandco/go-sdl2/sdl"
 
 type level struct {
-	w, h  int32
-	cells []cell
+	w, h         int32
+	cells        []cell
+	initialState []int
 }
 
 type cell struct {
@@ -29,9 +30,10 @@ const (
 
 func makeLevel(w, h int32) level {
 	l := level{
-		w:     w,
-		h:     h,
-		cells: []cell{},
+		w:            w,
+		h:            h,
+		cells:        []cell{},
+		initialState: []int{},
 	}
 	for i := 0; i < int(w*h); i++ {
 		l.cells = append(l.cells, cell{STATE_BLACK, BEHAV_NONE})
@@ -138,16 +140,17 @@ func (l level) Draw(w, h int32) {
 }
 
 type behavType struct {
-	name    string
-	texture *sdl.Texture
+	name     string
+	texture  *sdl.Texture
+	edHotkey sdl.Keycode
 	// action func ...
 }
 
 func initCells() {
-	c.behavTypes = append(c.behavTypes, behavType{"none", loadTexture(texturePath("none"))})
-	c.behavTypes = append(c.behavTypes, behavType{"toggle", loadTexture(texturePath("toggle"))})
-	c.behavTypes = append(c.behavTypes, behavType{"4toggle", loadTexture(texturePath("4toggle"))})
-	c.behavTypes = append(c.behavTypes, behavType{"swap", loadTexture(texturePath("swap"))})
-	c.behavTypes = append(c.behavTypes, behavType{"4trigger", loadTexture(texturePath("4trigger"))})
+	c.behavTypes = append(c.behavTypes, behavType{"none", loadTexture(texturePath("none")), sdl.K_1})
+	c.behavTypes = append(c.behavTypes, behavType{"toggle", loadTexture(texturePath("toggle")), sdl.K_2})
+	c.behavTypes = append(c.behavTypes, behavType{"4toggle", loadTexture(texturePath("4toggle")), sdl.K_3})
+	c.behavTypes = append(c.behavTypes, behavType{"swap", loadTexture(texturePath("swap")), sdl.K_4})
+	c.behavTypes = append(c.behavTypes, behavType{"4trigger", loadTexture(texturePath("4trigger")), sdl.K_5})
 
 }

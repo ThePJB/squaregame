@@ -25,13 +25,24 @@ import (
 // 	always blank (doesnt matter) tiles
 // 	tile state shines through symbol
 
+// support resize for editor clarity
+
 type Context struct {
 	tStart  time.Time
 	logfile *os.File
 
 	level      level
 	behavTypes []behavType
+
+	mode            int
+	editUISelection int
 }
+
+const (
+	MODE_PLAY = iota
+	MODE_EDIT
+	NUM_MODES
+)
 
 var gc GraphicsContext
 var c Context
@@ -94,6 +105,20 @@ func main() {
 						ty := t.Y * c.level.h / gc.yres
 						c.level.DoCellAction(tx, ty)
 					}
+				case *sdl.KeyboardEvent:
+					if t.State == sdl.PRESSED {
+						if t.Keysym.Sym == sdl.K_e {
+							c.mode = (c.mode + 1) % NUM_MODES
+						} else {
+							for i := range c.behavTypes {
+								if t.Keysym.Sym == c.behavTypes[i].edHotkey {
+									c.editUISelection = i
+									log(1, "Editor select", i, c.behavTypes[i].name)
+									break
+								}
+							}
+						}
+					}
 				}
 			}
 
@@ -104,6 +129,10 @@ func main() {
 			//gc.Draw()
 
 			c.level.Draw(gc.xres, gc.yres)
+
+			if c.mode == MODE_EDIT {
+				drawEditUI(gc.xres, gc.yres)
+			}
 
 			gc.renderer.Present()
 
@@ -116,4 +145,25 @@ func main() {
 		}
 	}
 
+}
+
+func drawEditUI(w, h int32) {
+	s := h / NUM_BEHAVS
+	for i := 0; i < NUM_BEHAVS; i++ {
+		spriteSize := s / 2
+		spriteToRect := sdl.Rect{50, int32(i) * s, spriteSize, spriteSize}
+
+		borderSize := (s * 6) / 10
+		borderOffset := (borderSize - spriteSize) / 2
+
+		borderToRect := sdl.Rect{50 - borderOffset, int32(i)*s - borderOffset, borderSize, borderSize}
+		if c.editUISelection == i {
+			gc.renderer.SetDrawColor(255, 0, 0, 255)
+		} else {
+			gc.renderer.SetDrawColor(255, 255, 255, 255)
+		}
+
+		gc.renderer.FillRect(&borderToRect)
+		gc.renderer.CopyEx(c.behavTypes[i].texture, nil, &spriteToRect, 0.0, nil, sdl.FLIP_NONE)
+	}
 }

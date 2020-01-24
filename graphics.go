@@ -23,13 +23,6 @@ type GraphicsContext struct {
 	DrawBuffer []DrawRectCommand
 }
 
-const (
-	MODE_MARCH = iota
-	MODE_HEIGHT
-	MODE_BASIC
-	NUM_GMODES
-)
-
 func (gc *GraphicsContext) DrawHArrow(x, y, m, w, r, g, b, a float64) {
 	w = w / float64(gc.yres)
 	if m > 0 {
