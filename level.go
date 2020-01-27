@@ -3,14 +3,14 @@ package main
 import "github.com/veandco/go-sdl2/sdl"
 
 type level struct {
-	w, h         int32
-	cells        []cell
-	initialState []int
+	w, h  int32
+	cells []cell
 }
 
 type cell struct {
-	state     int
-	behaviour int
+	state        int
+	initialState int
+	behaviour    int
 }
 
 const (
@@ -30,13 +30,12 @@ const (
 
 func makeLevel(w, h int32) level {
 	l := level{
-		w:            w,
-		h:            h,
-		cells:        []cell{},
-		initialState: []int{},
+		w:     w,
+		h:     h,
+		cells: []cell{},
 	}
 	for i := 0; i < int(w*h); i++ {
-		l.cells = append(l.cells, cell{STATE_BLACK, BEHAV_NONE})
+		l.cells = append(l.cells, cell{STATE_BLACK, STATE_BLACK, BEHAV_NONE})
 	}
 	return l
 }
@@ -57,6 +56,15 @@ func (l *level) GetCellState(x, y int32) (int, bool) {
 		return 0, false
 	}
 	return l.cells[y*l.w+x].state, true
+}
+func (l *level) SetCellInitialState(x, y int32, s int) {
+	l.cells[y*l.w+x].initialState = s
+}
+func (l *level) GetCellInitialState(x, y int32) (int, bool) {
+	if x >= l.w || y >= l.h {
+		return 0, false
+	}
+	return l.cells[y*l.w+x].initialState, true
 }
 
 // Click function
